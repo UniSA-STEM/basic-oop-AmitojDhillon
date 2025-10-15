@@ -57,3 +57,4 @@ class Rig:
     broken = property(get_broken, set_broken)
     storage = property(get_storage, set_storage)
 
+
