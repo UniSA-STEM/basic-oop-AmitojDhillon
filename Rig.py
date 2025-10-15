@@ -51,6 +51,7 @@ class Rig:
     def set_storage(self, storage):
         self.__storage = storage
 
+
     name = property(get_name, set_name)
     damage = property(get_damage, set_damage)
     upgrade_level = property(get_upgrade_level, set_upgrade_level)
@@ -58,3 +59,61 @@ class Rig:
     storage = property(get_storage, set_storage)
 
 
+    def take_hits(self):
+        self.__damage += 1
+        if self.__damage >=2 + self.__upgrade_level:
+            self.broken = True
+
+    def repair(self):
+        self.__damage = 0
+        self.__broken = False
+
+    def upgrade(self):
+        self.__upgrade_level += 1
+
+    def generate_assest(self):
+        assets = [
+            Asset("Data Spike"),
+            Asset("Removable Drive"),
+            Asset("Security Chip"),
+            Asset("Hardware Patch"),
+        ]
+        new_asset = random.choice(assets)
+        self.__storage.append(new_asset)
+        return new_asset
+
+    def store_assest(self, asset):
+        if isinstance(asset, Asset):
+            self.__storage.append(asset)
+
+    def release_assest(self, asset_name):
+        for asset in self.__storage:
+            if asset.name == asset_name:
+                self.__storage.remove(asset)
+                return asset
+        return None
+
+    def condition(self):
+
+        if self.__broken:
+            return "Broken"
+        elif self.damage == 0:
+            return "Pristine"
+        elif self.damage == 1:
+            return "Damaged"
+        else:
+            return "Critical"
+
+    def __str__(self):
+        if len(self.__storage) > 0:
+            assets_list = []
+            for asset in self.__storage:
+                assets_list.append(asset.name)
+            assets = ",".join(assets_list)
+        else:
+            assets = "empty"
+
+        return (
+            f"Rig: {self.__name} | Level: {self.upgrade_level}|"
+            f"Damage: {self.damage} | Content: {self.condition()} | Storage: {self.assets}"
+        )
