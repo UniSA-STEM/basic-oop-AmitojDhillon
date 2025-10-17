@@ -57,62 +57,63 @@ class Hacker:
     exposed = property(get_exposed)
 
 
-    def __inc_trace(self, amount=1):
-        self.__trace_level += amount
-        if self.__trace_level >= Hacker.TRACE_THRESHOLD:
-            self.__exposed = True
-
-    def __consume_from_inventory(self, asset_name):
+    def obtain_rig(self, rig=None):
+        token = None
         for i, a in enumerate(self.__inventory):
-            if a.name == asset_name:
-                return self.__inventory.pop(i)
-            return None
+            if a.name == 'CryptoToken':
+                token = self.inventory.pop(i)
+                break
 
-    def __remove_from_storage(self, storage, asset_name, require_unencrypted=False):
-        for i, a in enumerate(storage):
-            if a.name == asset_name and (not require_unencrypted or not a.encrypted):
-                return storage.pop(i)
-            return None
-
-
-    def acquire_rig(self, rig=None):
-        token = self.__consume_from_inventory('CryptoToken')
         if not token:
-            print('No CryptoToken available to acquire rig')
+            print('No cryptotoken available to acquire rig')
             return False
 
         if rig is None:
-            rig = Rig(self.__name + "'s Rig")
-            self.__rig = rig
-            print("Rig activated:", self.__rig.name)
-            return True
+            rig = Rig(self.__name + 's Rig')
 
-
-    def launch_data_spike(self, target_rig):
-
-        if not self.__rig:
-            print('No Rig available to launch data spike')
-            return False
-
-        spike = self.__remove_from_storage(self.__rig.storage, 'Data Spike', require_unencrypted=False)
-        if not spike:
-            print('No Data Spike in your rig storage')
-
-        if hasattr(target_rig, 'take_hit'):
-            target_rig.take_hit()
-        self.__inc_trace(1)
-        print('Data Spike launched. Trace:', self.__trace_level)
+        self.__rig = rig
+        print('Rig activated:', self.__rig.name)
         return True
 
-    def extract_assets(self, target_rig):
+    def data_spike(self, targeted_rig):
 
+        if not self.__rig:
+            print('You have no rig to launch a spike from')
+            return False
+
+        spike = None
+        for i, a in enumerate(self.__rig.storage):
+            if a.name == 'Data Spike':
+                spike = self.__rig.storage.pop(i)
+                break
+
+            if not spike:
+                print('No Data Spike in your rig storage')
+                return False
+
+            if hasattr(targeted_rig, 'take_hit'):
+                targeted_rig.take_hit()
+
+            self.__trace_level+= 1
+            if self.__trace_level >= Hacker.TRACE_THRESHOLD:
+                self.__exposed = True
+
+            print('Data Spike activated. Trace:', self.__trace_level)
+            return True
+
+    def extract_assets(self, target_rig):
         if not getattr(target_rig, 'Broken', False):
             print('Target rig is broken. Extraction blocked')
             return False
 
-        drive = self.__consume_from_inventory('Removable Drive')
+        drive = None
+        for i, a in enumerate(self.__inventory):
+            if a.name == 'Removable Drive':
+                drive = self.__inventory.pop(i)
+                break
+
         if not drive:
-            print('No Removable Drive in inventory.')
+            print('No drive available to extract assets')
             return False
 
         moved = 0
@@ -123,9 +124,33 @@ class Hacker:
                 moved += 1
             else:
                 remaining.append(a)
+
         target_rig.storage = remaining
-        self.__inc_trace(1)
-        print('Extracted:', moved, 'assets. Trace:', self.__trace_level)
+
+        self.__trace_level += 1
+        if self.__trace_level >= Hacker.TRACE_THRESHOLD:
+            self.__exposed = True
+
+        print('Extracted assets:', moved, 'assets. Trace:', self.__trace_level)
         return True
 
+    def encrypt_asset(self, name, location='inventory'):
+        chip = None
+        for i, a in enumerate(self.__inventory):
+            if a.name == 'Security Chip':
+                chip = self.__inventory.pop(i)
+                break
+
+        if not chip:
+            print('No chip available to encrypt assets')
+            return False
+
+        target = None
+        if location == 'inventory':
+            for a in self.__inventory:
+                if a.name == name:
+                    target = a
+                    break
+
+        elif location == 'rig' and self.__rig:
 
