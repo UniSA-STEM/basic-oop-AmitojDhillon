@@ -56,3 +56,32 @@ class Hacker:
     exposed = property(get_exposed)
 
 
+    def __inc_trace(self, amount=1):
+        self.__trace_level += amount
+        if self.__trace_level >= Hacker.TRACE_THRESHOLD:
+            self.__exposed = True
+
+    def __consume_from_inventory(self, asset_name):
+        for i, a in enumerate(self.__inventory):
+            if a.name == asset_name:
+                return self.__inventory.pop(i)
+            return None
+
+    def __remove_from_storage(self, storage, asset_name, require_unencrypted=False):
+        for i, a in enumerate(storage):
+            if a.name == asset_name and (not require_unencrypted or not a.encrypted):
+                return storage.pop(i)
+            return None
+
+
+    def acquire_rig(self, rig=None):
+        token = self.__consume_from_inventory('CryptoToken')
+        if not token:
+            print('No CryptoToken available to acquire rig')
+            return False
+
+        if rig is None:
+            rig = Rig(self.__name + "'s Rig")
+            self.__rig = rig
+            print("Rig activated:", self.__rig.name)
+            return True
