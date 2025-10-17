@@ -15,6 +15,7 @@ class Hacker:
     TRACE_THRESHOLD = 5
 
     def __init__(self, name):
+
         self.__name = name
         self.__inventory = [Asset("CryptoToken")]
         self.__rig = None
@@ -85,3 +86,46 @@ class Hacker:
             self.__rig = rig
             print("Rig activated:", self.__rig.name)
             return True
+
+
+    def launch_data_spike(self, target_rig):
+
+        if not self.__rig:
+            print('No Rig available to launch data spike')
+            return False
+
+        spike = self.__remove_from_storage(self.__rig.storage, 'Data Spike', require_unencrypted=False)
+        if not spike:
+            print('No Data Spike in your rig storage')
+
+        if hasattr(target_rig, 'take_hit'):
+            target_rig.take_hit()
+        self.__inc_trace(1)
+        print('Data Spike launched. Trace:', self.__trace_level)
+        return True
+
+    def extract_assets(self, target_rig):
+
+        if not getattr(target_rig, 'Broken', False):
+            print('Target rig is broken. Extraction blocked')
+            return False
+
+        drive = self.__consume_from_inventory('Removable Drive')
+        if not drive:
+            print('No Removable Drive in inventory.')
+            return False
+
+        moved = 0
+        remaining = []
+        for a in target_rig.storage:
+            if not a.encrypted:
+                self.__inventory.append(a)
+                moved += 1
+            else:
+                remaining.append(a)
+        target_rig.storage = remaining
+        self.__inc_trace(1)
+        print('Extracted:', moved, 'assets. Trace:', self.__trace_level)
+        return True
+
+
