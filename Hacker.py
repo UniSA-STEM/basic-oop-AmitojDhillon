@@ -1,9 +1,9 @@
 """
 File: Hacker.py
 Description: <A brief description of this Python module.>
-Author: <full name>
-ID: <student_id>
-Username: <username>
+Author: Amitoj Dhillon
+ID: 110408872
+Username: dhiay010
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 from tkinter.font import names
