@@ -1,6 +1,6 @@
 """
 File: Rig.py
-Description: This code shoes the representation of the Rig class which is the Hackers computer
+Description: This code shows the representation of the Rig class which is the Hackers computer
 which can store assets, take damage, be upgraded and be repaired.
 Author: Amitoj Dhillon
 ID: 110408872
