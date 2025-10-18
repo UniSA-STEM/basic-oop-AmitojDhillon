@@ -197,3 +197,4 @@ class Rig:
             f"Rig: {self.__name} | Level: {self.upgrade_level}|"
             f"Damage: {self.damage} | Content: {self.condition()} | Storage: {self.assets}"
         )
+
