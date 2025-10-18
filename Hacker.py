@@ -153,4 +153,72 @@ class Hacker:
                     break
 
         elif location == 'rig' and self.__rig:
+            for a in self.__rig.storage:
+                if a.name == name:
+                    target = a
+                    break
+
+        if not target:
+            print('No target available to encrypt assets')
+            return False
+
+        target.encrypted = True
+        print('Encrypted asset:', target.name)
+        return True
+
+    def decrypt_asset(self, name, location='inventory'):
+        chip = None
+        for i, a in enumerate(self.__inventory):
+            if a.name == 'Security Chip':
+                chip = self.__inventory.pop(i)
+                break
+
+        if not chip:
+            print('No chip available to decrypt assets')
+            return False
+
+        target = None
+        if location == 'inventory':
+            for a in self.__inventory:
+                if a.name == name:
+                    target = a
+                    break
+
+        elif location == 'rig' and self.__rig:
+            for a in self.__rig.storage:
+                if a.name == name:
+                    target = a
+                    break
+
+        if not target:
+            print('No target available to decrypt assets')
+            return False
+
+        target.decrypted = False
+        print('Decrypted asset:', target.name)
+        return False
+
+    def rig_upgrade(self):
+        if not self.__rig:
+            print('You have no rig to upgrade')
+            return False
+
+        patch = None
+        for i, a in enumerate(self.__rig.storage):
+            if a.name == 'Hardware patch':
+                patch = self.__inventory.pop(i)
+                break
+
+        if not patch:
+            print('No Hardware patch available in inventory')
+            return False
+
+        if hasattr(self.__rig, 'upgrade'):
+            self.__rig.upgrade()
+
+        print('Rig upgraded to level:', self.__rig.upgrade_level)
+        return True
+
+
+
 
