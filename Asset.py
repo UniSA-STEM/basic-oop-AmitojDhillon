@@ -24,7 +24,7 @@ class Asset:
         """
         self.__name = name
         self.__description = description
-        self.__encrypted = False
+        self.__encrypted = bool(encrypted)
 
     """
     Getters

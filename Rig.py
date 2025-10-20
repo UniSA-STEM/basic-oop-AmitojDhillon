@@ -110,7 +110,7 @@ class Rig:
     storage = property(get_storage, set_storage)
 
 
-    def take_hits(self):
+    def take_hit(self):
         """
         Increased Rigs damage point by 1 when hits taken.
         When damage points hit or exceed the limit,
@@ -133,21 +133,21 @@ class Rig:
         """
         self.__upgrade_level += 1
 
-    def generate_assest(self):
+    def generate_asset(self):
         """
         Randomly generates an asset to be stored in the rig.
         """
         assets = [
-            Asset("Data Spike"),
-            Asset("Removable Drive"),
-            Asset("Security Chip"),
-            Asset("Hardware Patch"),
+            Asset("Data Spike",'Attacks rigs'),
+            Asset("Removable Drive",'Extracts data'),
+            Asset("Security Chip",'encrypts and decrypts data'),
+            Asset("Hardware Patch",'upgrades rigs'),
         ]
         new_asset = random.choice(assets)
         self.__storage.append(new_asset)
         return new_asset
 
-    def store_assest(self, asset):
+    def store_asset(self, asset):
         """
         Asset object stored in the Rigs storage.
         Confirms that only valid assets are stored in the rig.
@@ -155,7 +155,7 @@ class Rig:
         if isinstance(asset, Asset):
             self.__storage.append(asset)
 
-    def release_assest(self, asset_name):
+    def release_asset(self, asset_name):
         """
         Return and remove an asset from the Rig storage.
         Confirms that only valid assets are stored in the rig.
@@ -185,16 +185,14 @@ class Rig:
         Returns a string representation of the rig displaying its
         name, damage, upgrade level, broken state and storage list.
         """
-        if len(self.__storage) > 0:
-            assets_list = []
-            for asset in self.__storage:
-                assets_list.append(asset.name)
-            assets = ",".join(assets_list)
+        if self.storage:
+            names = [asset.name for asset in self.storage]
+            assets = ', '.join(names)
         else:
-            assets = "empty"
+            assets = 'Empty'
 
         return (
-            f"Rig: {self.__name} | Level: {self.upgrade_level}|"
-            f"Damage: {self.damage} | Content: {self.condition()} | Storage: {self.assets}"
+            f'Rig {self.__name} | Level: {self.upgrade_level} |'
+            f'damage: {self.damage} | Condition: {self.condition()} | Storage: {assets}'
         )
 

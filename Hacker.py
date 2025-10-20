@@ -25,7 +25,7 @@ class Hacker:
         :param name:
         """
         self.__name = name
-        self.__inventory = [Asset("CryptoToken")]
+        self.__inventory = [Asset('CryptoToken','Digital token')]
         self.__rig = None
         self.__trace_level= 0
         self.__exposed = False
@@ -92,16 +92,15 @@ class Hacker:
     def obtain_rig(self, rig=None):
         """
         Uses one Crypto token to obtain the rig of the Hacker.
-
         """
         token = None
         for i, a in enumerate(self.__inventory):
             if a.name == 'CryptoToken':
-                token = self.inventory.pop(i)
+                token = self.__inventory.pop(i)
                 break
 
         if not token:
-            print('No cryptotoken available to acquire rig')
+            print('No Cryptotoken available to acquire a rig')
             return False
 
         if rig is None:
@@ -128,27 +127,27 @@ class Hacker:
                 spike = self.__rig.storage.pop(i)
                 break
 
-            if not spike:
-                print('No Data Spike in your rig storage')
-                return False
+        if not spike:
+            print('No Data Spike in your rig storage')
+            return False
 
-            if hasattr(targeted_rig, 'take_hit'):
-                targeted_rig.take_hit()
+        if hasattr(targeted_rig, 'take_hit'):
+            targeted_rig.take_hit()
 
-            self.__trace_level+= 1
-            if self.__trace_level >= Hacker.TRACE_THRESHOLD:
-                self.__exposed = True
+        self.__trace_level+= 1
+        if self.__trace_level >= Hacker.TRACE_THRESHOLD:
+             self.__exposed = True
 
-            print('Data Spike activated. Trace:', self.__trace_level)
-            return True
+        print('Data Spike activated. Trace:', self.__trace_level)
+        return True
 
     def extract_assets(self, target_rig):
         """
         If the target rig is broken, recover a removable drive fron the inventory
         and move all unencrypted assets from targeted_rig.storage to hackers inventory.
         """
-        if not getattr(target_rig, 'Broken', False):
-            print('Target rig is broken. Extraction blocked')
+        if not getattr(target_rig, 'broken', False):
+            print('Target rig is not broken. Extraction blocked')
             return False
 
         drive = None
@@ -246,9 +245,13 @@ class Hacker:
             print('No target available to decrypt assets')
             return False
 
-        target.decrypted = False
-        print('Decrypted asset:', target.name)
-        return False
+        if target.encrypted:
+            target.encrypted = False
+            print('Decrypted asset:', target.name)
+            return True
+        else:
+            print('Asset not encrypted')
+            return False
 
     def rig_upgrade(self):
         """
@@ -259,7 +262,7 @@ class Hacker:
             return False
 
         patch = None
-        for i, a in enumerate(self.__rig.storage):
+        for i, a in enumerate(self.__inventory):
             if a.name == 'Hardware patch':
                 patch = self.__inventory.pop(i)
                 break
@@ -287,20 +290,20 @@ class Hacker:
         moved = 0
         if move_all:
             remaining = []
-            for a in self.__rig.inventory:
+            for a in self.__inventory:
                 if not a.encrypted:
-                    self.__rig.inventory.append(a)
+                    self.__rig.storage.append(a)
                     moved += 1
                 else:
                     remaining.append(a)
-            self.__rig.inventory = remaining
+            self.__inventory = remaining
         else:
             for i, a in enumerate(self.__inventory):
                 if a.name == name:
                     if a.encrypted:
                         print('Cannot store asset as encrypted')
                         return False
-                    self.__rig.inventory.append(self.__inventory.pop(i))
+                    self.__rig.storage.append(self.__inventory.pop(i))
                     moved = 1
                     break
 
