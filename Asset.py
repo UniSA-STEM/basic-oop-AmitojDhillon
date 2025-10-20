@@ -18,9 +18,6 @@ class Asset:
     def __init__(self, name, description, encrypted=False):
         """
         Constructor which initializes the asset.
-        :param name:The name of the asset.
-        :param description:The description of the asset.
-        :param encrypted:Whether the asset is encrypted.
         """
         self.__name = name
         self.__description = description
