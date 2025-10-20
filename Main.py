@@ -1,3 +1,12 @@
+"""
+File: Main.py
+Description: Testing code with scenarios.
+Author: Amitoj Dhillon
+ID: 110408872
+Username: Dhiay010
+This is my own work as defined by the University's Academic Misconduct Policy.
+"""
+
 from Asset import Asset
 from Rig import Rig
 from Hacker import Hacker
